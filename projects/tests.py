@@ -38,8 +38,8 @@ UserModel = get_user_model()
 
 class SkillModelTest(TestCase):
     def test_create_skill(self):
-        skill_record = Skill.objects.create(name='Python')
-        self.assertEqual(skill_record.name, 'Python')
+        skill_record = Skill.objects.create(name="Python")
+        self.assertEqual(skill_record.name, "Python")
 
 
 class ProjectModelTest(TestCase):
@@ -62,7 +62,7 @@ class ProjectModelTest(TestCase):
 
 
 class ProjectListViewTest(TestCase):
-    LIST_URL = reverse('projects:project_list')
+    LIST_URL = reverse("projects:project_list")
 
     def setUp(self):
         self.list_owner = UserModel.objects.create_user(
@@ -80,7 +80,7 @@ class ProjectListViewTest(TestCase):
 
 
 class ProjectCreateTest(TestCase):
-    CREATE_URL = reverse('projects:create_project')
+    CREATE_URL = reverse("projects:create_project")
 
     @classmethod
     def setUpTestData(cls):
@@ -119,18 +119,18 @@ class ProjectDetailTest(TestCase):
         )
 
     def test_project_detail_page_exists(self):
-        detail_url = reverse('projects:project_detail', args=[self.detail_project.id])
+        detail_url = reverse("projects:project_detail", args=[self.detail_project.id])
         page_response = self.client.get(detail_url)
         self.assertEqual(page_response.status_code, HTTPStatus.OK)
 
 
 class SkillAutocompleteTest(TestCase):
-    AUTOCOMPLETE_URL = reverse('users:skill_autocomplete')
+    AUTOCOMPLETE_URL = reverse("users:skill_autocomplete")
 
     @classmethod
     def setUpTestData(cls):
         Skill.objects.create(name=SKILL_NAME)
 
     def test_skill_autocomplete(self):
-        page_response = self.client.get(f'{self.AUTOCOMPLETE_URL}?q=py')
+        page_response = self.client.get(f"{self.AUTOCOMPLETE_URL}?q=py")
         self.assertEqual(page_response.status_code, HTTPStatus.OK)

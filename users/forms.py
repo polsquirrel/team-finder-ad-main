@@ -3,12 +3,13 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 
 from projects.forms import BaseGithubForm
-from users.utils import _validate_phone 
+from users.utils import _validate_phone
 from users.constants import (
     DUPLICATE_EMAIL_MSG,
 )
 
 UserModel = get_user_model()
+
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label="Пароль")

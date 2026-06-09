@@ -1,5 +1,6 @@
 import json
 
+
 def _parse_skill_request_body(request):
     if request.content_type == "application/json":
         try:

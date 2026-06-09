@@ -23,7 +23,7 @@ def _filter_users_by_skill(queryset, skill_name):
 
 
 def user_list(request):
-    participants_qs = User.objects.prefetch_related('skills').order_by('id')
+    participants_qs = User.objects.prefetch_related("skills").order_by("id")
     skill_catalog = Skill.objects.all().order_by("name")
     selected_skill = request.GET.get("skill")
 
@@ -56,7 +56,7 @@ def register(request):
 def user_detail(request, user_id):
     profile = User.objects.filter(id=user_id).first()
     if profile is None:
-        return JsonResponse({"error": "User not found"}, status=404)
+        return JsonResponse({"error": "User not found"}, status=HTTPStatus.NOT_FOUND)
     return render(request, "users/user-details.html", {"user": profile})
 
 
@@ -69,7 +69,7 @@ def logout_view(request):
 def edit_profile(request, user_id):
     profile = User.objects.filter(id=user_id).first()
     if profile is None:
-        return JsonResponse({"error": "User not found"}, status=404)
+        return JsonResponse({"error": "User not found"}, status=HTTPStatus.NOT_FOUND)
 
     if request.user.id != profile.id:
         return redirect("users:user_detail", user_id=profile.id)
@@ -95,10 +95,9 @@ def skill_autocomplete(request):
     if len(search_term) < 2:
         return JsonResponse([], safe=False)
 
-    matching_skills = (
-        Skill.objects.filter(name__istartswith=search_term)
-        .order_by("name")[:SKILL_AUTOCOMPLETE_LIMIT]
-    )
+    matching_skills = Skill.objects.filter(name__istartswith=search_term).order_by(
+        "name"
+    )[:SKILL_AUTOCOMPLETE_LIMIT]
     results = [{"id": item.id, "name": item.name} for item in matching_skills]
     return JsonResponse(results, safe=False)
 
@@ -108,7 +107,7 @@ def skill_autocomplete(request):
 def add_user_skill(request, user_id):
     profile = User.objects.filter(id=user_id).first()
     if profile is None:
-        return JsonResponse({"error": "User not found"}, status=404)
+        return JsonResponse({"error": "User not found"}, status=HTTPStatus.NOT_FOUND)
 
     if request.user.id != profile.id:
         return JsonResponse({"error": "Forbidden"}, status=HTTPStatus.FORBIDDEN)
@@ -120,7 +119,7 @@ def add_user_skill(request, user_id):
     if skill_id:
         skill = Skill.objects.filter(id=skill_id).first()
         if skill is None:
-            return JsonResponse({"error": "Skill not found"}, status=404)
+            return JsonResponse({"error": "Skill not found"}, status=HTTPStatus.NOT_FOUND)
         created = False
     elif skill_name:
         skill, created = Skill.objects.get_or_create(name=skill_name)
@@ -135,13 +134,15 @@ def add_user_skill(request, user_id):
         profile.skills.add(skill)
         added = True
 
-    return JsonResponse({
-        "skill_id": skill.id,
-        "id": skill.id,
-        "name": skill.name,
-        "created": created,
-        "added": added,
-    })
+    return JsonResponse(
+        {
+            "skill_id": skill.id,
+            "id": skill.id,
+            "name": skill.name,
+            "created": created,
+            "added": added,
+        }
+    )
 
 
 @login_required
@@ -149,11 +150,11 @@ def add_user_skill(request, user_id):
 def remove_user_skill(request, user_id, skill_id):
     profile = User.objects.filter(id=user_id).first()
     if profile is None:
-        return JsonResponse({"error": "User not found"}, status=404)
+        return JsonResponse({"error": "User not found"}, status=HTTPStatus.NOT_FOUND)
 
     skill = Skill.objects.filter(id=skill_id).first()
     if skill is None:
-        return JsonResponse({"error": "Skill not found"}, status=404)
+        return JsonResponse({"error": "Skill not found"}, status=HTTPStatus.NOT_FOUND)
 
     if request.user.id != profile.id:
         return JsonResponse({"status": "error"}, status=HTTPStatus.FORBIDDEN)

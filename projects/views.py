@@ -31,8 +31,9 @@ def project_list(request):
 def project_detail(request, project_id):
     project = _project_detail_queryset().filter(id=project_id).first()
     if project is None:
-        return JsonResponse({"error": "Project not found"}, status=404)
+        return JsonResponse({"error": "Project not found"}, status=HTTPStatus.NOT_FOUND)
     return render(request, "projects/project-details.html", {"project": project})
+
 
 @login_required
 def create_project(request):
@@ -55,7 +56,7 @@ def create_project(request):
 def edit_project(request, project_id):
     project = Project.objects.filter(id=project_id).first()
     if project is None:
-        return JsonResponse({"error": "Project not found"}, status=404)
+        return JsonResponse({"error": "Project not found"}, status=HTTPStatus.NOT_FOUND)
 
     if not _is_project_owner(request.user, project):
         return redirect("projects:project_detail", project_id=project.id)
@@ -76,7 +77,7 @@ def edit_project(request, project_id):
 def complete_project(request, project_id):
     project = Project.objects.filter(id=project_id).first()
     if project is None:
-        return JsonResponse({'error': 'Project not found'}, status=404)
+        return JsonResponse({"error": "Project not found"}, status=HTTPStatus.NOT_FOUND)
 
     can_complete = (
         request.method == "POST"
@@ -95,7 +96,7 @@ def complete_project(request, project_id):
 def toggle_participate(request, project_id):
     project = Project.objects.filter(id=project_id).first()
     if project is None:
-        return JsonResponse({"error": "Project not found"}, status=404)
+        return JsonResponse({"error": "Project not found"}, status=HTTPStatus.NOT_FOUND)
 
     if request.method == "POST":
         membership = project.participants.filter(id=request.user.id)

@@ -106,6 +106,8 @@ LOGIN_REDIRECT_URL = "projects:project_list"
 LOGIN_URL = "users:login"
 LOGOUT_REDIRECT_URL = "projects:project_list"
 
-CSRF_TRUSTED_ORIGINS = [f"http://{host}" for host in ALLOWED_HOSTS] + [f"https://{host}" for host in ALLOWED_HOSTS]
+CSRF_TRUSTED_ORIGINS = [f"http://{host}" for host in ALLOWED_HOSTS] + [
+    f"https://{host}" for host in ALLOWED_HOSTS
+]
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_HTTPONLY = False

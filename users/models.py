@@ -16,11 +16,15 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True, verbose_name="Email")
     name = models.CharField(max_length=USER_NAME_MAX_LENGTH, verbose_name="Имя")
-    surname = models.CharField(max_length=USER_SURNAME_MAX_LENGTH, verbose_name="Фамилия")
+    surname = models.CharField(
+        max_length=USER_SURNAME_MAX_LENGTH, verbose_name="Фамилия"
+    )
     avatar = models.ImageField(upload_to="avatars/", verbose_name="Аватар")
     phone = models.CharField(max_length=USER_PHONE_MAX_LENGTH, verbose_name="Телефон")
     github_url = models.URLField(blank=True, verbose_name="GitHub")
-    about = models.TextField(max_length=USER_ABOUT_MAX_LENGTH, blank=True, verbose_name="О себе")
+    about = models.TextField(
+        max_length=USER_ABOUT_MAX_LENGTH, blank=True, verbose_name="О себе"
+    )
     skills = models.ManyToManyField("projects.Skill", related_name="users", blank=True)
 
     USERNAME_FIELD = "email"

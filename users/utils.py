@@ -24,11 +24,7 @@ def _normalize_russian_phone(raw_phone):
 
 
 def _is_valid_russian_phone(phone):
-    return (
-        phone.startswith("+7")
-        and len(phone) == 12
-        and phone[2:].isdigit()
-    )
+    return phone.startswith("+7") and len(phone) == 12 and phone[2:].isdigit()
 
 
 def _validate_phone(phone_value, exclude_user_id=None):
