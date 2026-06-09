@@ -5,9 +5,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
+from team_finder.utils import _parse_skill_request_body
 from projects.models import Skill
 from users.constants import SKILL_AUTOCOMPLETE_LIMIT
 from users.forms import ProfileEditForm, RegistrationForm
@@ -22,7 +23,7 @@ def _filter_users_by_skill(queryset, skill_name):
 
 
 def user_list(request):
-    participants_qs = User.objects.all().order_by("id")
+    participants_qs = User.objects.prefetch_related('skills').order_by('id')
     skill_catalog = Skill.objects.all().order_by("name")
     selected_skill = request.GET.get("skill")
 
@@ -53,7 +54,9 @@ def register(request):
 
 
 def user_detail(request, user_id):
-    profile = get_object_or_404(User, id=user_id)
+    profile = User.objects.filter(id=user_id).first()
+    if profile is None:
+        return JsonResponse({"error": "User not found"}, status=404)
     return render(request, "users/user-details.html", {"user": profile})
 
 
@@ -64,7 +67,9 @@ def logout_view(request):
 
 @login_required
 def edit_profile(request, user_id):
-    profile = get_object_or_404(User, id=user_id)
+    profile = User.objects.filter(id=user_id).first()
+    if profile is None:
+        return JsonResponse({"error": "User not found"}, status=404)
 
     if request.user.id != profile.id:
         return redirect("users:user_detail", user_id=profile.id)
@@ -98,19 +103,12 @@ def skill_autocomplete(request):
     return JsonResponse(results, safe=False)
 
 
-def _parse_skill_request_body(request):
-    if request.content_type == "application/json":
-        try:
-            return json.loads(request.body)
-        except json.JSONDecodeError:
-            return {}
-    return request.POST
-
-
 @login_required
 @require_POST
 def add_user_skill(request, user_id):
-    profile = get_object_or_404(User, id=user_id)
+    profile = User.objects.filter(id=user_id).first()
+    if profile is None:
+        return JsonResponse({"error": "User not found"}, status=404)
 
     if request.user.id != profile.id:
         return JsonResponse({"error": "Forbidden"}, status=HTTPStatus.FORBIDDEN)
@@ -120,7 +118,9 @@ def add_user_skill(request, user_id):
     skill_name = payload.get("name", "").strip() if payload.get("name") else ""
 
     if skill_id:
-        skill = get_object_or_404(Skill, id=skill_id)
+        skill = Skill.objects.filter(id=skill_id).first()
+        if skill is None:
+            return JsonResponse({"error": "Skill not found"}, status=404)
         created = False
     elif skill_name:
         skill, created = Skill.objects.get_or_create(name=skill_name)
@@ -147,8 +147,13 @@ def add_user_skill(request, user_id):
 @login_required
 @require_POST
 def remove_user_skill(request, user_id, skill_id):
-    profile = get_object_or_404(User, id=user_id)
-    skill = get_object_or_404(Skill, id=skill_id)
+    profile = User.objects.filter(id=user_id).first()
+    if profile is None:
+        return JsonResponse({"error": "User not found"}, status=404)
+
+    skill = Skill.objects.filter(id=skill_id).first()
+    if skill is None:
+        return JsonResponse({"error": "Skill not found"}, status=404)
 
     if request.user.id != profile.id:
         return JsonResponse({"status": "error"}, status=HTTPStatus.FORBIDDEN)

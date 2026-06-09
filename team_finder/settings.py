@@ -54,8 +54,12 @@ WSGI_APPLICATION = "team_finder.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env_config("POSTGRES_DB", default="team_finder"),
+        "USER": env_config("POSTGRES_USER", default="team_finder"),
+        "PASSWORD": env_config("POSTGRES_PASSWORD"),
+        "HOST": env_config("POSTGRES_HOST", default="localhost"),
+        "PORT": env_config("POSTGRES_PORT", default="5432"),
     }
 }
 

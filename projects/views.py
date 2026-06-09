@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 
 from projects.constants import (
     PROJECTS_PER_PAGE,
@@ -29,9 +29,10 @@ def project_list(request):
 
 
 def project_detail(request, project_id):
-    project = get_object_or_404(_project_detail_queryset(), id=project_id)
+    project = _project_detail_queryset().filter(id=project_id).first()
+    if project is None:
+        return JsonResponse({"error": "Project not found"}, status=404)
     return render(request, "projects/project-details.html", {"project": project})
-
 
 @login_required
 def create_project(request):
@@ -52,7 +53,9 @@ def create_project(request):
 
 @login_required
 def edit_project(request, project_id):
-    project = get_object_or_404(Project, id=project_id)
+    project = Project.objects.filter(id=project_id).first()
+    if project is None:
+        return JsonResponse({"error": "Project not found"}, status=404)
 
     if not _is_project_owner(request.user, project):
         return redirect("projects:project_detail", project_id=project.id)
@@ -71,7 +74,9 @@ def edit_project(request, project_id):
 
 @login_required
 def complete_project(request, project_id):
-    project = get_object_or_404(Project, id=project_id)
+    project = Project.objects.filter(id=project_id).first()
+    if project is None:
+        return JsonResponse({'error': 'Project not found'}, status=404)
 
     can_complete = (
         request.method == "POST"
@@ -88,7 +93,9 @@ def complete_project(request, project_id):
 
 @login_required
 def toggle_participate(request, project_id):
-    project = get_object_or_404(Project, id=project_id)
+    project = Project.objects.filter(id=project_id).first()
+    if project is None:
+        return JsonResponse({"error": "Project not found"}, status=404)
 
     if request.method == "POST":
         membership = project.participants.filter(id=request.user.id)

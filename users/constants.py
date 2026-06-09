@@ -15,16 +15,34 @@ AVATAR_SIZE = 200
 AVATAR_FONT_SIZE = 100
 AVATAR_TEXT_COLOR = "#FFFFFF"
 
+RED = "#FF6B6B"
+TEAL = "#4ECDC4"
+SKY_BLUE = "#45B7D1"
+MINT_GREEN = "#96CEB4"
+LIGHT_YELLOW = "#FFEAA7"
+PLUM = "#DDA0DD"
+SEAFOAM = "#98D8C8"
+GOLDEN_YELLOW = "#F7DC6F"
+LAVENDER_PURPLE = "#BB8FCE"
+CORNFLOWER_BLUE = "#85C1E2"
+
 # Палитра фона для аватара
+
 AVATAR_COLORS = (
-    "#FF6B6B",
-    "#4ECDC4",
-    "#45B7D1",
-    "#96CEB4",
-    "#FFEAA7",
-    "#DDA0DD",
-    "#98D8C8",
-    "#F7DC6F",
-    "#BB8FCE",
-    "#85C1E2",
+    RED,
+    TEAL,
+    SKY_BLUE,
+    MINT_GREEN,
+    LIGHT_YELLOW,
+    PLUM,
+    SEAFOAM,
+    GOLDEN_YELLOW,
+    LAVENDER_PURPLE,
+    CORNFLOWER_BLUE,
 )
+
+DUPLICATE_EMAIL_MSG = "Пользователь с таким email уже существует"
+DUPLICATE_PHONE_MSG = "Этот номер телефона уже используется"
+PHONE_FORMAT_MSG = "Номер телефона должен быть в формате 8XXXXXXXXXX или +7XXXXXXXXXX"
+PHONE_REQUIRED_MSG = "Телефон обязателен для заполнения"
+

@@ -28,7 +28,7 @@ TeamFinder — веб-платформа, где авторы публикуют
 
 - Python 3.13
 - Django 5.2
-- SQLite / PostgreSQL
+- PostgreSQL
 - HTML, CSS, JavaScript
 - Docker / Docker Compose
 - Pillow — генерация аватаров
@@ -36,25 +36,39 @@ TeamFinder — веб-платформа, где авторы публикуют
 ## Запуск
 
 1. Клонируйте репозиторий и перейдите в папку проекта.
-2. Установите зависимости:
-
-```bash
-pip install -r requirements.txt
-```
-
-3. Создайте файл окружения:
+2. Создайте файл окружения:
 
 ```bash
 copy .env_example .env
 ```
 
-4. Примените миграции и запустите сервер:
+3. Запустите PostgreSQL в Docker:
+
+```bash
+docker compose up -d
+```
+
+4. Установите зависимости:
+
+```bash
+pip install -r requirements.txt
+```
+
+5. Примените миграции и запустите сервер:
 
 ```bash
 python manage.py migrate
 python manage.py runserver
 ```
 
-5. Откройте в браузере: http://127.0.0.1:8000/
+6. Откройте в браузере: http://127.0.0.1:8000/
 
 Админ-панель: http://127.0.0.1:8000/admin/
+
+### Остановка базы данных
+
+```bash
+docker compose down
+```
+
+Данные сохраняются в Docker volume `postgres_data`.
